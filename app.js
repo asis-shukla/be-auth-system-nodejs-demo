@@ -1,14 +1,19 @@
-require("dotenv").config();
-require("./config/database").connect();
+import dotenv from "dotenv";
+dotenv.config();
 
-const bcryptjs = require("bcryptjs");
-const express = require("express");
+import dbConnect from "./config/database.js";
+dbConnect()
 
-const User = require("./model/user");
+import bcryptjs from "bcryptjs";
+const {hash} = bcryptjs;
+
+import express, { json } from "express";
+
+import User from "./model/user.js";
 
 const app = express();
 
-app.use(express.json());
+app.use(json());
 
 app.get("/", (req, res) => {
   res.send("<h1> Hello from Ashish! </h1>");
@@ -25,7 +30,7 @@ app.post("/register", async (req, res) => {
     res.status(301).send("User already registered");
   }
 
-  const hashedPassword = await bcryptjs.hash(password, 10);
+  const hashedPassword = await hash(password, 10);
 
   User.create({
     firstname,
@@ -35,4 +40,4 @@ app.post("/register", async (req, res) => {
   });
 });
 
-module.exports = app;
+export default app;
